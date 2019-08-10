@@ -27,6 +27,7 @@ type Msg =
     | NewTodoChanged of string
     | AddNewTodo
     | DeleteTodo of TodoId
+    | CompleteTodo of TodoId * bool
 
 let init() =
     { 
@@ -62,6 +63,17 @@ let withoutTodo todoId state =
 
     { state with Todos = todos }    
 
+let withCompletedTodo todoId completed state =
+    let todos =
+        state.Todos 
+        |> List.map (fun todo -> 
+            if todo.Id = todoId then
+                { todo with Completed = completed }
+            else 
+                todo
+        )
+    { state with Todos = todos }    
+
 let update (msg: Msg) (state: State): State =
     match msg with 
     | NewTodoChanged description ->
@@ -74,7 +86,10 @@ let update (msg: Msg) (state: State): State =
     | DeleteTodo todo ->
         state 
         |> withoutTodo todo    
-
+    
+    | CompleteTodo (todo,completed) ->
+        state 
+        |> withCompletedTodo todo completed
 
 let title = 
     Html.p [ 
@@ -127,12 +142,21 @@ let renderTodo (todo: Todo) dispatch =
                 Html.p [
                     prop.className "subtitle"
                     prop.text todo.Description
+                    prop.styleList [
+                        todo.Completed , [style.color.lightGray]
+                    ]
                 ]
             ]
-
             div [ "column"; "is-narrow" ] [ 
-                Html.button [ 
-                    prop.classes ["button"; "is-danger"]
+                Html.input [
+                    prop.inputType.checkbox
+                    prop.onChange (fun e -> 
+                       let c = (e.target :?> Browser.Types.HTMLInputElement).``checked``
+                       CompleteTodo (todo.Id,c)|> dispatch) 
+                ]        
+                Html.text "completed"    
+            ]
+            div [ "column"; "is-narrow" ] [ 
                 Html.a [ 
                     prop.classes ["delete"; "is-medium"]
                     prop.onClick (fun _ -> dispatch (DeleteTodo todo.Id))
