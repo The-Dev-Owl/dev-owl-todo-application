@@ -30,7 +30,14 @@ type Msg =
 
 let init() =
     { 
-        Todos = []
+        Todos = 
+            [ 
+                {
+                    Id = System.Guid.NewGuid() |> TodoId
+                    Description = "Buy milk"
+                    Completed = false
+                }
+            ]
         NewTodoDescription = ""
     }
 
