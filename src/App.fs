@@ -133,10 +133,9 @@ let renderTodo (todo: Todo) dispatch =
             div [ "column"; "is-narrow" ] [ 
                 Html.button [ 
                     prop.classes ["button"; "is-danger"]
+                Html.a [ 
+                    prop.classes ["delete"; "is-medium"]
                     prop.onClick (fun _ -> dispatch (DeleteTodo todo.Id))
-                    prop.children [ 
-                        Html.i [ prop.classes [ "fa"; "fa-times" ] ]
-                    ]
                 ]
             ]
         ]
