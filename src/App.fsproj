@@ -8,6 +8,6 @@
   <ItemGroup>
     <PackageReference Include="Fable.Elmish.React" Version="3.0.1" />
     <PackageReference Include="Feliz" Version="0.35.0" />
-    <PackageReference Include="Zanaptak.TypedCssClasses" Version="0.0.1" />
+    <PackageReference Include="Zanaptak.TypedCssClasses" Version="0.0.2" />
   </ItemGroup>
 </Project>
