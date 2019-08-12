@@ -27,7 +27,8 @@ type Msg =
     | NewTodoChanged of string
     | AddNewTodo
     | DeleteTodo of TodoId
-    | CompleteTodo of TodoId * bool
+    | CompleteTodo of TodoId
+    | UncompleteTodo of TodoId
 
 let init() =
     { 
@@ -87,9 +88,13 @@ let update (msg: Msg) (state: State): State =
         state 
         |> withoutTodo todo    
     
-    | CompleteTodo (todo,completed) ->
+    | CompleteTodo todo ->
         state 
-        |> withCompletedTodo todo completed
+        |> withCompletedTodo todo true
+    
+    | UncompleteTodo todo ->
+        state 
+        |> withCompletedTodo todo false
 
 let title = 
     Html.p [ 
@@ -150,9 +155,10 @@ let renderTodo (todo: Todo) dispatch =
             div [ "column"; "is-narrow" ] [ 
                 Html.input [
                     prop.inputType.checkbox
-                    prop.onChange (fun e -> 
-                       let c = (e.target :?> Browser.Types.HTMLInputElement).``checked``
-                       CompleteTodo (todo.Id,c)|> dispatch) 
+                    prop.onCheckedChange (fun completed -> 
+                       if completed then CompleteTodo todo.Id
+                       else UncompleteTodo todo.Id
+                       |> dispatch) 
                 ]        
                 Html.text "completed"    
             ]
